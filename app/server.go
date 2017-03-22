@@ -27,13 +27,21 @@ func RunAPI() {
 	}))
 
 	// API routes
-	g := e.Group("/api")
+	g := e.Group("/api/v1")
+	// API --- Tasks
 	g.GET("/tasks", handlers.IndexTask(db))
 	g.GET("/tasks/:id", handlers.ShowTask(db))
 	g.POST("/tasks", handlers.CreateTask(db))
-	// g.PUT("/tasks/:id", handlers.UpdateTask(db))
+	g.PUT("/tasks/:id", handlers.UpdateTask(db))
 	g.DELETE("/tasks/:id", handlers.DestroyTask(db))
-
+	// API --- Hosts
+	g.GET("/hosts", handlers.IndexHost(db))
+	g.GET("/hosts/:id", handlers.ShowHost(db))
+	g.POST("/hosts", handlers.CreateHost(db))
+	g.PUT("/hosts/:id", handlers.UpdateHost(db))
+	g.DELETE("/hosts/:id", handlers.DestroyHost(db))
+	// API --- Health
+	g.GET("/health", handlers.GetHealth)
 	e.Logger.Fatal(e.Start(":8080"))
 }
 

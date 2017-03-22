@@ -3,6 +3,7 @@ package models
 import (
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
 	// SQLite driver
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
@@ -31,21 +32,25 @@ func GetTasks(db *gorm.DB) Tasks {
 }
 
 // GetTask is used to retrieve a single task object from the database
-func GetTask(id int, db *gorm.DB) Task {
+func GetTask(db *gorm.DB, id int) Task {
 	var task Task
 	db.Find(&task, id)
 	return task
 }
 
 // CreateTask is used to create a new task object in the database
-func CreateTask(task Task, db *gorm.DB) Task {
+func CreateTask(db *gorm.DB, task Task) Task {
+	task.URLID = uuid.New().String()
 	db.Save(&task)
 	return task
 }
 
+// UpdateTask is used to update an existing task object in the database
+func UpdateTask(db *gorm.DB, task Task) {
+	db.Save(&task)
+}
+
 // DeleteTask is used to delete a task object in the database
-func DeleteTask(id int, db *gorm.DB) {
-	var task Task
-	db.Find(&task, id)
+func DeleteTask(db *gorm.DB, task Task) {
 	db.Delete(&task)
 }

@@ -25,7 +25,7 @@ func ShowTask(db *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		// Fetch individual task using our model
 		id, _ := strconv.Atoi(c.Param("id"))
-		task := models.GetTask(id, db)
+		task := models.GetTask(db, id)
 		btask := models.Task{}
 		if task == btask {
 			return c.JSON(http.StatusOK, models.ErrorResponse{
@@ -46,30 +46,31 @@ func CreateTask(db *gorm.DB) echo.HandlerFunc {
 		// Map incoming JSON body to the new Task
 		c.Bind(&task)
 		// Add a task using our new model
-		task = models.CreateTask(task, db)
+		task = models.CreateTask(db, task)
 
 		return c.JSON(http.StatusCreated, task)
 	}
 }
 
 // UpdateTask endpoint
-// func UpdateTask(db *gorm.DB) echo.HandlerFunc {
-// 	return func(c echo.Context) error {
-// 		id, _ := strconv.Atoi(c.Param("id"))
-// 		task := models.GetTask(id, db)
-// 		c.Bind(&task)
-// 		task, err := models.UpdateTask(task, db)
-//
-// 		return c.JSON(http.StatusCreated, models.Task{ID: id})
-// 	}
-// }
+func UpdateTask(db *gorm.DB) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		id, _ := strconv.Atoi(c.Param("id"))
+		task := models.GetTask(db, id)
+		c.Bind(&task)
+		models.UpdateTask(db, task)
+
+		return c.JSON(http.StatusCreated, task)
+	}
+}
 
 // DestroyTask endpoint
 func DestroyTask(db *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		id, _ := strconv.Atoi(c.Param("id"))
-		models.DeleteTask(id, db)
+		task := models.GetTask(db, id)
+		models.DeleteTask(db, task)
 
-		return c.JSON(http.StatusOK, models.Deleted{ID: id})
+		return c.JSON(http.StatusOK, task)
 	}
 }
