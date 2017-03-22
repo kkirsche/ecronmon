@@ -1,15 +1,16 @@
 package app
 
 import (
-	"database/sql"
-
 	"github.com/Sirupsen/logrus"
+	"github.com/kkirsche/echo_cronmon/models"
+
+	"github.com/jinzhu/gorm"
 	// SQLite database driver is required
-	_ "github.com/mattn/go-sqlite3"
+	_ "github.com/jinzhu/gorm/dialects/sqlite"
 )
 
-func initDB(filepath string) *sql.DB {
-	db, err := sql.Open("sqlite3", filepath)
+func initDB(filepath string) *gorm.DB {
+	db, err := gorm.Open("sqlite3", filepath)
 
 	// Here we check for any db errors then exit
 	if err != nil {
@@ -27,18 +28,7 @@ func initDB(filepath string) *sql.DB {
 	return db
 }
 
-func migrate(db *sql.DB) error {
-	migrateHost(db)
-	// if err != nil {
-	// 	logrus.WithError(err).Errorln("Failed to migrate host object")
-	// 	return err
-	// }
-
-	migrateTask(db)
-	// if err != nil {
-	// 	logrus.WithError(err).Errorln("Failed to migrate task object")
-	// 	return err
-	// }
-
-	return nil
+func migrate(db *gorm.DB) {
+	db.AutoMigrate(&models.Host{})
+	db.AutoMigrate(&models.Task{})
 }
